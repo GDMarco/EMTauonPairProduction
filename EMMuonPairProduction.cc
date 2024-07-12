@@ -9,7 +9,7 @@
 
 namespace crpropa {
 
-mass_muon = 1.883531627e-28 * kilogram
+static const double mass_muon = 1.883531627e-28 * kilogram;
 static const double mmc2 = mass_muon * c_squared;
 
 EMMuonPairProduction::EMMuonPairProduction(ref_ptr<PhotonField> photonField, bool haveMuons, double thinning, double limit) {
@@ -22,9 +22,9 @@ EMMuonPairProduction::EMMuonPairProduction(ref_ptr<PhotonField> photonField, boo
 void EMMuonPairProduction::setPhotonField(ref_ptr<PhotonField> photonField) {
     this->photonField = photonField;
     std::string fname = photonField->getFieldName();
-    setDescription("EMMPairProduction: " + fname);
-    initRate(getDataPath("EMMPairProduction/rate_" + fname + ".txt"));
-    initCumulativeRate(getDataPath("EMMPairProduction/cdf_" + fname + ".txt"));
+    setDescription("EMMuonPairProduction: " + fname);
+    initRate(getDataPath("EMMuonPairProduction/rate_" + fname + ".txt"));
+    initCumulativeRate(getDataPath("EMMuonPairProduction/cdf_" + fname + ".txt"));
 }
 
 void EMMuonPairProduction::setHaveMuons(bool haveMuons) {
@@ -170,7 +170,7 @@ class PPSecondariesEnergyDistribution {
         }
 };
 
-void EMPairProduction::performInteraction(Candidate *candidate) const {
+void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     // scale particle energy instead of background photon energy
     double z = candidate->getRedshift();
     double E = candidate->current.getEnergy() * (1 + z);
