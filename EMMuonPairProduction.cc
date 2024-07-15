@@ -194,7 +194,7 @@ void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     double hi = tabs[j];
     double s = lo + random.rand() * (hi - lo);
 
-    // sample muon / positron energy
+    // sample muon / antimuon energy
     static PPSecondariesEnergyDistribution interpolation;
     double Ee = interpolation.sample(E, s);
     double Ep = E - Ee;
@@ -209,11 +209,11 @@ void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     // apply sampling
     if (random.rand() < pow(f, thinning)) {
         double w = 1. / pow(f, thinning);
-        candidate->addSecondary(11, Ep / (1 + z), pos, w, interactionTag);
+        candidate->addSecondary(13, Ep / (1 + z), pos, w, interactionTag);
     }
     if (random.rand() < pow(1 - f, thinning)){
         double w = 1. / pow(1 - f, thinning);
-        candidate->addSecondary(-11, Ee / (1 + z), pos, w, interactionTag);
+        candidate->addSecondary(-13, Ee / (1 + z), pos, w, interactionTag);
     }
 }
 
