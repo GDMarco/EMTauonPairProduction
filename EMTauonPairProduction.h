@@ -1,4 +1,3 @@
-#include <crpropa/Module.h>
 #include "crpropa/Module.h"
 #include "crpropa/PhotonBackground.h"
 
@@ -12,48 +11,48 @@ namespace crpropa {
  */
  
 /**
- @class EMMuonPairProduction
- @brief Muon-pair production of photons with background photons.
+ @class EMTauonPairProduction
+ @brief Tauon-pair production of photons with background photons.
 
- This module simulates muon-pair production of cosmic ray photons with background photons:
- gamma + gamma_b --> mu+ + mu- (Breit-Wheeler process).
- The resulting muon positron pair is optionally created (default = false).
+ This module simulates tauon-pair production of cosmic ray photons with background photons:
+ gamma + gamma_b --> tau+ + tau- (Breit-Wheeler process).
+ The resulting tauon positron pair is optionally created (default = false).
  The module limits the propagation step size to a fraction of the mean free path (default = 0.1).
  Thinning is available. A thinning of 0 means that all particles are tracked.
  For the maximum thinning of 1, only a few representative particles are added to the list of secondaries.
  Note that for thinning>0 the output must contain the column "weights", which should be included in the post-processing.
  */
-class EMMuonPairProduction : public Module
+class EMTauonPairProduction : public Module
 {
 private:
     ref_ptr<PhotonField> photonField;     // target photon field
-    bool haveMuons;                    // add secondary muons to simulation
+    bool haveTauons;                    // add secondary tauons to simulation
     double limit;                        // limit the step to a fraction of the mean free path
     double thinning;                    // factor of the thinning (0: no thinning, 1: maximum thinning)
-    std::string interactionTag = "EMMPP";
+    std::string interactionTag = "EMTauPP";
 
     // tabulated interaction rate 1/lambda(E)
-    std::vector<double> tabEnergy;  //!< muon energy in [J]
+    std::vector<double> tabEnergy;  //!< tauon energy in [J]
     std::vector<double> tabRate;  //!< interaction rate in [1/m]
     
     // tabulated CDF(s_kin, E) = cumulative differential interaction rate
-    std::vector<double> tabE;  //!< muon energy in [J]
+    std::vector<double> tabE;  //!< tauon energy in [J]
     std::vector<double> tabs;  //!< s_kin = s - m^2 in [J**2]
     std::vector< std::vector<double> > tabCDF;  //!< cumulative interaction rate
 public:
     /** Constructor
      @param photonField        target photon field
-     @param haveMuons   if true, add secondary muons as candidates
+     @param haveTauons   if true, add secondary tauons as candidates
      @param thinning        weighted sampling of secondaries (0: all particles are tracked; 1: maximum thinning)
      @param limit            step size limit as fraction of mean free path
      */
-    EMMuonPairProduction(ref_ptr<PhotonField> photonField, bool haveMuons = false, double thinning = 0, double limit = 0.1);
+    EMTauonPairProduction(ref_ptr<PhotonField> photonField, bool haveTauons = false, double thinning = 0, double limit = 0.1);
     
     // set the target photon field
     void setPhotonField(ref_ptr<PhotonField> photonField);
 
-    // decide if secondary muons are added to the simulation
-    void setHaveMuons(bool haveMuons);
+    // decide if secondary tauons are added to the simulation
+    void setHaveTauons(bool haveTauons);
 
     /** Limit the propagation step to a fraction of the mean free path
      * @param limit fraction of the mean free path

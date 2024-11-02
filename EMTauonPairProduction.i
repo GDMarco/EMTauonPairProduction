@@ -1,5 +1,5 @@
 /* name of the plugin: myPlugin*/
-%module(directors="1", threads="1", allprotected="1") EMMuonPairProduction
+%module(directors="1", threads="1", allprotected="1") EMTauonPairProduction
 
 /* Exceptions required */
 %include "exception.i"
@@ -9,14 +9,14 @@
  */
 %{
 #include "CRPropa.h"
-#include "EMMuonPairProduction.h"
+#include "EMTauonPairProduction.h"
 %}
 
 /* import crpropa in wrapper */
 %import (module="crpropa") "crpropa.i"
 
 /* include plugin parts to generate wrappers for */
-%include "EMMuonPairProduction.h"
+%include "EMTauonPairProduction.h"
 
 
 

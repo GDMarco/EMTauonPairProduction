@@ -1,4 +1,4 @@
-#include "EMMuonPairProduction.h"
+#include "EMTauonPairProduction.h"
 #include "crpropa/Units.h"
 #include "crpropa/Random.h"
 
@@ -9,41 +9,41 @@
 
 namespace crpropa {
 
-static const double mass_muon = 1.883531627e-28 * kilogram;
-static const double mmc2 = mass_muon * c_squared;
+static const double mass_tauon = 3.167e-27 * kilogram;
+static const double mtc2 = mass_tauon * c_squared;
 
-EMMuonPairProduction::EMMuonPairProduction(ref_ptr<PhotonField> photonField, bool haveMuons, double thinning, double limit) {
+EMTauonPairProduction::EMTauonPairProduction(ref_ptr<PhotonField> photonField, bool haveTauons, double thinning, double limit) {
     setPhotonField(photonField);
     setThinning(thinning);
     setLimit(limit);
-    setHaveMuons(haveMuons);
+    setHaveTauons(haveTauons);
 }
 
-void EMMuonPairProduction::setPhotonField(ref_ptr<PhotonField> photonField) {
+void EMTauonPairProduction::setPhotonField(ref_ptr<PhotonField> photonField) {
     this->photonField = photonField;
     std::string fname = photonField->getFieldName();
-    setDescription("EMMuonPairProduction: " + fname);
-    initRate(getDataPath("EMMuonPairProduction/rate_" + fname + ".txt"));
-    initCumulativeRate(getDataPath("EMMuonPairProduction/cdf_" + fname + ".txt"));
+    setDescription("EMTauonPairProduction: " + fname);
+    initRate(getDataPath("EMTauonPairProduction/rate_" + fname + ".txt"));
+    initCumulativeRate(getDataPath("EMTauonPairProduction/cdf_" + fname + ".txt"));
 }
 
-void EMMuonPairProduction::setHaveMuons(bool haveMuons) {
-    this->haveMuons = haveMuons;
+void EMTauonPairProduction::setHaveTauons(bool haveTauons) {
+    this->haveTauons = haveTauons;
 }
 
-void EMMuonPairProduction::setLimit(double limit) {
+void EMTauonPairProduction::setLimit(double limit) {
     this->limit = limit;
 }
 
-void EMMuonPairProduction::setThinning(double thinning) {
+void EMTauonPairProduction::setThinning(double thinning) {
     this->thinning = thinning;
 }
 
-void EMMuonPairProduction::initRate(std::string filename) {
+void EMTauonPairProduction::initRate(std::string filename) {
     std::ifstream infile(filename.c_str());
 
     if (!infile.good())
-        throw std::runtime_error("EMMuonPairProduction: could not open file " + filename);
+        throw std::runtime_error("EMTauonPairProduction: could not open file " + filename);
 
     // clear previously loaded interaction rates
     tabEnergy.clear();
@@ -63,11 +63,11 @@ void EMMuonPairProduction::initRate(std::string filename) {
     infile.close();
 }
 
-void EMMuonPairProduction::initCumulativeRate(std::string filename) {
+void EMTauonPairProduction::initCumulativeRate(std::string filename) {
     std::ifstream infile(filename.c_str());
 
     if (!infile.good())
-        throw std::runtime_error("EMMuonPairProduction: could not open file " + filename);
+        throw std::runtime_error("EMTauonPairProduction: could not open file " + filename);
 
     // clear previously loaded tables
     tabE.clear();
@@ -121,7 +121,7 @@ class PPSecondariesEnergyDistribution {
         PPSecondariesEnergyDistribution() {
             N = 1000;
             size_t Ns = 1000;
-            double s_min = 4 * mmc2 * mmc2;
+            double s_min = 4 * mtc2 * mtc2;
             double s_max = 1e23 * eV * eV;
             double dls = log(s_max / s_min) / Ns;
             data = std::vector< std::vector<double> >(Ns, std::vector<double>(N));
@@ -158,7 +158,7 @@ class PPSecondariesEnergyDistribution {
             Random &random = Random::instance();
             size_t j = random.randBin(s0) + 1;
 
-            double s_min = 4. * mmc2 * mmc2;
+            double s_min = 4. * mtc2 * mtc2;
             double beta = sqrtl(1. - s_min / s);
             double x0 = (1. - beta) / 2.;
             double dx = log((1 + beta) / (1 - beta)) / N;
@@ -170,7 +170,7 @@ class PPSecondariesEnergyDistribution {
         }
 };
 
-void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
+void EMTauonPairProduction::performInteraction(Candidate *candidate) const {
     // scale particle energy instead of background photon energy
     double z = candidate->getRedshift();
     double E = candidate->current.getEnergy() * (1 + z);
@@ -178,8 +178,8 @@ void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     // cosmic ray photon is lost after interacting
     candidate->setActive(false);
 
-    // check if secondary muon pair needs to be produced
-    if (not haveMuons)
+    // check if secondary tauon pair needs to be produced
+    if (not haveTauons)
         return;
 
     // check if in tabulated energy range
@@ -190,11 +190,11 @@ void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     Random &random = Random::instance();
     size_t i = closestIndex(E, tabE);  // find closest tabulation point
     size_t j = random.randBin(tabCDF[i]);
-    double lo = std::max(4 * mmc2 * mmc2, tabs[j-1]);  // first s-tabulation point below min(s_kin) = (2 me c^2)^2; ensure physical value
+    double lo = std::max(4 * mtc2 * mtc2, tabs[j-1]);  // first s-tabulation point below min(s_kin) = (2 me c^2)^2; ensure physical value
     double hi = tabs[j];
     double s = lo + random.rand() * (hi - lo);
 
-    // sample muon / antimuon energy
+    // sample Tauon / antiTauon energy
     static PPSecondariesEnergyDistribution interpolation;
     double Ee = interpolation.sample(E, s);
     double Ep = E - Ee;
@@ -209,15 +209,15 @@ void EMMuonPairProduction::performInteraction(Candidate *candidate) const {
     // apply sampling
     if (random.rand() < pow(f, thinning)) {
         double w = 1. / pow(f, thinning);
-        candidate->addSecondary(13, Ep / (1 + z), pos, w, interactionTag);
+        candidate->addSecondary(15, Ep / (1 + z), pos, w, interactionTag);
     }
     if (random.rand() < pow(1 - f, thinning)){
         double w = 1. / pow(1 - f, thinning);
-        candidate->addSecondary(-13, Ee / (1 + z), pos, w, interactionTag);
+        candidate->addSecondary(-15, Ee / (1 + z), pos, w, interactionTag);
     }
 }
 
-void EMMuonPairProduction::process(Candidate *candidate) const {
+void EMTauonPairProduction::process(Candidate *candidate) const {
     // check if photon
     if (candidate->current.getId() != 22)
         return;
@@ -251,11 +251,11 @@ void EMMuonPairProduction::process(Candidate *candidate) const {
 
 }
 
-void EMMuonPairProduction::setInteractionTag(std::string tag) {
+void EMTauonPairProduction::setInteractionTag(std::string tag) {
     interactionTag = tag;
 }
 
-std::string EMMuonPairProduction::getInteractionTag() const {
+std::string EMTauonPairProduction::getInteractionTag() const {
     return interactionTag;
 }
 
