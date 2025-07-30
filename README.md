@@ -1,20 +1,17 @@
-# Plugin template
+# EMTauonPairProduction
 
-To create your own CRPropa modules in C++ we recommend using plugins. Plugins are small programs that can be installed as a separate modules. 
-Here, we provide a template to create such a plugin. 
+Plugin for the CRPropa simulation code to include the production of tauon pairs from the interaction between gamma rays with background radiation fields.
 
-## General structure of the template
-The module class is defined in the header file `myPlugin.h` and the functions in the C++ file `myPlugin.cc`. The file `myPlugin.i` defines the SWIG interface for python usage. 
-
+## Structure
+The header of the `EMTauonPairProduction` class is defined in `EMTauonPairProduction.h`. The C++ file `EMTauonPairProduction.cc` contains the interaction class functions and the function to produce the secondaries. The file `EMTauonPairProduction.i` is the SWIG interface for python usage. This structure follows the usual CRPropa modules for electromagnetic processes, e.g. see [CRPropa EMPairProduction](https://github.com/CRPropa/CRPropa3/blob/master/include/crpropa/module/EMPairProduction.h).
+ 
 The python script `testPlugin.py` tests the installation (see below) of the example plugin as presented here.
 
-## Adjusting custom module name
-To create your own module with a meaningful module name, all files called `myPlugin.*` and the folder `python/myPlugin` have to be renamed to your plugin name. Also the content of the following files has to be adjusted: 
-- `CMakeList.txt`:  The plugin name (see line 4) has to be changed.
-- `python/myPlugin/__init__.py`: The directory name and the content of the init-file have to be changed: `.myModule` to `.<MyModuleName>`
-- `myPlugin.i`: at two positions the header file is listed. The lines have to be adapted accordingly. 
+## Interaction tables
 
-# Installation of a plugin
+An updated version of the [CRPropa3-data](https://github.com/CRPropa/CRPropa3-data) repository has been develped to include the interaction rates for this plugin, see [EMCascadePlugins-data](https://github.com/GDMarco/CRPropa3-data/tree/EMCascadePlugins-data). 
+
+# Installation
 For the installation of the plugin you need a running CRPropa version (see [installation documentation](https://crpropa.github.io/CRPropa3/pages/Installation.html)).
 This is done analogously to the installation of CRPropa. We recommend to activate the same virtual python environment that you use to run CRPropa.
 
@@ -32,8 +29,16 @@ After configuration (press c) and generation (press g) you can now build and ins
 
     make install
 
-
 ## optional testing
 Now you can run the python test script. 
 
     python ../testPlugin.py
+
+# Citation
+
+If you use this plugin in your work, please cite:
+
+G. Di Marco, R. Alves Batista, M.A. Sánchez-Conde.  
+*Gamma rays as leptonic portals to energetic neutrinos: a new Monte Carlo approach*.  
+arXiv:2507.21867 [astro-ph.HE] (2025).  
+Available at: https://arxiv.org/abs/2507.21867

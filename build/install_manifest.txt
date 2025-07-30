@@ -1,0 +1,3 @@
+/Applications/CRPropa/EMCascadePlugins/EMTauonPairProduction/build/lib/python3.11/site-packages/EMTauonPairProduction/__init__.py
+/Applications/CRPropa/EMCascadePlugins/EMTauonPairProduction/build/lib/python3.11/site-packages/EMTauonPairProduction/EMTauonPairProduction.py
+/Applications/CRPropa/EMCascadePlugins/EMTauonPairProduction/build/lib/python3.11/site-packages/EMTauonPairProduction/_EMTauonPairProduction.so
